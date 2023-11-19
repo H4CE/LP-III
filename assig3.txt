@@ -1,0 +1,30 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report,ConfusionMatrixDisplay
+
+df=pd.read_csv(r"C:\Users\ambar\Downloads\LP3\ML\bank.csv")
+df.head()
+
+df.drop(["RowNumber","CustomerId","Surname"],axis=1,inplace=True)
+
+df["Gender"].replace({"Male":0,"Female":1},inplace=True)
+df["Geography"].replace({"France":0,"Spain":1,"Germany":2},inplace=True)
+
+
+
+x=df.drop(["Exited"],axis=1) #independent column
+y=df["Exited"] #dependent column
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,random_state=0,test_size=0.25)
+
+# Multi-layer Perceptron Classifier
+nn=MLPClassifier(hidden_layer_sizes=(100,100,100),random_state=0,max_iter=100,activation="relu")
+
+nn.fit(x_train,y_train)
+y_pred=nn.predict(x_test)
+
+cm=confusion_matrix(y_test,y_pred)
+ConfusionMatrixDisplay.from_predictions(y_test,y_pred)
